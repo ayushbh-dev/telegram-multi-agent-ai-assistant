@@ -1,0 +1,344 @@
+{
+  "name": "🤖Personal Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -380,
+        20
+      ],
+      "id": "a63534d9-3f5f-44b2-b1a5-5d7225d9799e",
+      "name": "Telegram Trigger",
+      "webhookId": "7f41763c-6fe6-4b3e-a607-71af3dd100e0",
+      "credentials": {
+        "telegramApi": {
+          "id": "iJa4uuy6D67DHyek",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are a helpful assistant called DINOSAUR.\nYou are talking with {{ $json.message.chat.first_name }}\n\n#Additional Information\nCurrent Date & Time: {{ $now }}\n\n# Tools Overview\nYou have access to the following tools.\n\n## Calculator\nMaster your numbers. Execute precise calculations, from fundamental arithmetic to advanced mathematical operations. Streamline your budgeting, solve complex equations, and ensure accuracy in all your computations\nPerform complex calculations, from basic arithmetic to advanced operations.\nUse it for quick calculations, financial budgeting, or solving mathematical problems.\n\n#mentalHealth\nProvide empathetic responses, self-care tips, relaxation exercises,and resources for mental well-being.\nUse it to manage emotions, practice mindfullness, and find resources for mental health improvement.\n\n#travelAgent\nAssist with travel planning, finding the best deals, suggesting destinations, and organizing itineraries.\nUse it to plan your next trip, compare flight prices, discover new destinations, and book accommodations.\n\n#youtubeAgent\nGuide in creating, editing, and optimizing YouTube videos, offering tips on scriptwriting, video editing, and content strategy.\nUse it for crafting video ideas, creating high-quality content, optimizing for search, and growing your YouTube audience.\n\n#weatherAgent\nProvide real-time current weather forecast for any location. provide current weather forecast for any city with instant temperature & condition checks and also provide accurate short-term weather predictions.\nUse it to getting current weather report for any specific city with temperature.\n\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        20
+      ],
+      "id": "967aab00-69a8-4f47-a4e2-66c795f28044",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.response }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        420,
+        20
+      ],
+      "id": "349aea09-c3d9-43e6-97b8-4546a52759ac",
+      "name": "Telegram",
+      "webhookId": "1982dda7-1334-4fd0-be51-653a45a13596",
+      "credentials": {
+        "telegramApi": {
+          "id": "iJa4uuy6D67DHyek",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "35473ecf-b6fa-419c-b27a-f48821482a93",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        20
+      ],
+      "id": "52e66256-2c65-4405-a498-9debc2bb0a32",
+      "name": "Response"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        220
+      ],
+      "id": "a0a3af8d-49e9-482e-b912-7822ad2000d5",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to manage emotions, practice mindfulness, and find resources for mental health improvement.",
+        "workflowId": {
+          "__rl": true,
+          "value": "D7ptabOcYD9Q2hCK",
+          "mode": "list",
+          "cachedResultName": "🤖Mental Health Support Bot"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        100,
+        220
+      ],
+      "id": "0fe98986-a1c6-4998-be52-9dc7cc840990",
+      "name": "MentalHealth"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to plan your next trip, compare flight prices, discover new destinations, and book accommodations.",
+        "workflowId": {
+          "__rl": true,
+          "value": "lpeWGe0TcDqGiYZe",
+          "mode": "list",
+          "cachedResultName": "🤖Travel Planner Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        220
+      ],
+      "id": "4a64a3d4-9cfd-4631-82ea-a90504228f1d",
+      "name": "Travel Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -200,
+        220
+      ],
+      "id": "1d973cce-3ae7-4705-b035-5d0626b8ff04",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "B5mCgd8kuFBDdGDk",
+          "name": "Groq account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Call this tool to crafting video ideas, creating high quality content, optimizing for search, and growing your YouTube audience.",
+        "workflowId": {
+          "__rl": true,
+          "value": "HkEbl1cudC9QKy12",
+          "mode": "list",
+          "cachedResultName": "🤖YouTube Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        340,
+        220
+      ],
+      "id": "97d1494a-0122-443b-aa87-b702d39d6fbe",
+      "name": "youtubeAgent"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool to get current weather and forecast updates for any city. Retrieves real-time weather and forecasts for a specified location",
+        "workflowId": {
+          "__rl": true,
+          "value": "MLNc4df7PiUeEhMG",
+          "mode": "list",
+          "cachedResultName": "🤖Weather"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        460,
+        220
+      ],
+      "id": "40d59969-e9d2-41d4-99f1-5d291d6454ad",
+      "name": "Weather Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MentalHealth": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Travel Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "youtubeAgent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weather Agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1869fe5c-25a3-4a2c-8687-0ce85ceca3bf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bfb9c9b75cf5f3ff2d00fc96135a46d34200e80a02871d09cb450da4c8ded7bf"
+  },
+  "id": "uI4aK8ddG5kl3eA4",
+  "tags": []
+}

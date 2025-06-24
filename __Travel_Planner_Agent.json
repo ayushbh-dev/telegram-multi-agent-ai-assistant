@@ -1,0 +1,98 @@
+{
+  "name": "🤖Travel Planner Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -280,
+        -20
+      ],
+      "id": "71403232-195a-4d74-b988-52a9108222a7",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# Role\nYour role is to plan a trip for me based on the following details:\nDestination: [City or \nCountry]\nTravel Dates: [Start Date] to [End Date]\nBudget: [Amount or Range]\nPreferences: [Flight (economy/business), Accomodation(hotel\\hostel), Activities (sightseeing, adventure, relaxation)]\nNumber of Travelers: [Number]\n\nProvide a detailed itinerary with options for flights, accomodations, and local activities, and include approximate costs for each. Summarize the travel plaan for easy reference."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -20
+      ],
+      "id": "f1dd345c-e10b-4f15-8d52-687abadfd5c6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        200
+      ],
+      "id": "c7e16c6f-6d41-4528-8a16-0b79028e381f",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "cfuAodm7kgzpyzQt",
+          "name": "Groq account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "I want to travel from Bhopal to Kedarnath"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "532d4fff-31e8-4d9e-a74a-da769cfff0e7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bfb9c9b75cf5f3ff2d00fc96135a46d34200e80a02871d09cb450da4c8ded7bf"
+  },
+  "id": "lpeWGe0TcDqGiYZe",
+  "tags": []
+}

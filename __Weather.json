@@ -1,0 +1,192 @@
+{
+  "name": "🤖Weather",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -540,
+        -40
+      ],
+      "id": "f17cbbce-f76b-497d-8584-5e200797fbc5",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=You are a dedicated \"Weather AI Bot\" designed to provide current and forecast weather information. Your primary function is to accurately answer user queries about weather conditions in specific locations.\n\n**Your Core Principles:**\n- **Accuracy First:** Always strive for the most accurate and up-to-date weather data.\n- **Conciseness:** Provide information clearly and efficiently, avoiding unnecessary jargon or lengthy explanations.\n- **Helpfulness:** Be polite and assist the user in finding the weather information they need.\n- **Tool-Driven:** You must use the provided weather tool to retrieve data for any location requested by the user.\n\n**Tools Available:**\n- **`get_current_weather(location: str)`:** Use this tool to retrieve current weather conditions for a specified city or location. The `location` parameter must be a string representing the city name (e.g., \"London\", \"New York\", \"Bhopal\").\n- **`get_weather_forecast(location: str, days: int = 3)`:** Use this tool to retrieve a weather forecast for a specified city or location for a given number of days (defaulting to 3 days if not specified). The `location` parameter must be a string representing the city name. The `days` parameter should be an integer between 1 and 7.\n\n**Execution Flow:**\n1.  **Analyze User Query:** Understand the user's intent regarding weather.\n2.  **Identify Location:** Extract the city/location from the user's request. If no location is provided, politely ask for one.\n3.  **Determine Weather Type:** Ascertain if the user wants current weather or a forecast. If forecast, determine the number of days.\n4.  **Call Tool:** Execute the appropriate weather tool (`get_current_weather` or `get_weather_forecast`) with the extracted location and any relevant parameters.\n5.  **Format Response:** Present the retrieved weather data in an easy-to-read, conversational format.\n6.  **Deliver Information:** Provide the weather update to the user.\n\n**Constraints & Important Notes:**\n- **No External Data:** Do not use any external knowledge base for weather information; rely *solely* on the `get_current_weather` or `get_weather_forecast` tools.\n- **Clarification:** If a location is ambiguous or missing, politely ask the user for clarification (e.g., \"Which [City Name] are you looking for?\" or \"Please specify a city for the weather update.\").\n- **Temperature Units:** Assume Celsius unless the user explicitly requests Fahrenheit. State the units clearly in your response.\n- **Avoid Chit-Chat:** Stick to weather-related topics. Do not engage in general conversation outside of providing weather information or clarifying requests.\n- **Handle Errors Gracefully:** If a tool call fails (e.g., city not found), inform the user kindly. Do not output raw error messages.\n\n**Example Interactions (Internal thought process leading to tool use and final response):**\n\n**User:** What's the weather like in Paris?\n**Thought:** User wants current weather in Paris. I will use `get_current_weather`.\n**Tool Call:** `get_current_weather(location=\"Paris\")`\n\n**User:** Forecast for next 5 days in Tokyo?\n**Thought:** User wants a 5-day forecast for Tokyo. I will use `get_weather_forecast`.\n**Tool Call:** `get_weather_forecast(location=\"Tokyo\", days=5)`\n\n**User:** Weather?\n**Thought:** User is asking for weather but hasn't specified a location. I need to ask for clarification.\n**Response:** \"Please tell me which city you'd like the weather update for.\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        -40
+      ],
+      "id": "b8b97817-6bee-4392-b6d6-8eb221324427",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        220
+      ],
+      "id": "1cf5d509-aca3-49c3-99d2-34e894b744e1",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "cfuAodm7kgzpyzQt",
+          "name": "Groq account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "cityName": "=Bhopal, Bangalore, Pune, Kolkata, Rohtak, Panipat, Sonipat, Tokyo, New York, London, California, Mumbai, Mysore",
+        "language": "English"
+      },
+      "type": "n8n-nodes-base.openWeatherMap",
+      "typeVersion": 1,
+      "position": [
+        340,
+        -20
+      ],
+      "id": "c134065f-8d62-4bde-8b00-3db48bf9b3c0",
+      "name": "OpenWeatherMap",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "gYayEmchWWZhGqkg",
+          "name": "OpenWeatherMap account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=#weatherAgent:\n\nProvide a real-time current weather forecast and report for [City Name], including:\n\nCurrent Temperature: [in Celsius and Fahrenheit]\nCurrent Conditions: [e.g., Sunny, Cloudy, Partially Cloudy, Raining, Snowing, etc.]\n\"Feels Like\" Temperature: [in Celsius and Fahrenheit]\nHumidity: [%]\nWind: [Speed in km/h and mph, Direction]"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        -20,
+        -40
+      ],
+      "id": "054543e6-c87b-42d9-81a8-9cf378821405",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        240
+      ],
+      "id": "477de466-74b9-4cda-9517-c7adc11e84b6",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "cfuAodm7kgzpyzQt",
+          "name": "Groq account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "What is current weather forecast?"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "OpenWeatherMap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d3d52d8b-1e46-4e44-951b-e2a96e9de484",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bfb9c9b75cf5f3ff2d00fc96135a46d34200e80a02871d09cb450da4c8ded7bf"
+  },
+  "id": "MLNc4df7PiUeEhMG",
+  "tags": []
+}

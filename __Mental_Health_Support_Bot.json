@@ -1,0 +1,98 @@
+{
+  "name": "🤖Mental Health Support Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -280,
+        -40
+      ],
+      "id": "b1466f93-01b0-4251-a62e-79305001c431",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=#Role\nYour role is assist to mental health support based on the following details: \n\nMood/Emotion: [Anxiety,stress,sadness,etc]\nCurrent situation: [Job-related stress, family issues, personal concerns, etc.]\npreferences:[self care strategies,relaxation exercises,mindfullness techniques,professional help] \nDesired Outcome: [Calming, Reassurance, Coping Mechanisms, Encouragement]\nDuration of Support: [Short-term(daily), Long-term(ongoing support)]\n\nprovide a tailored mental health plan with options for relaxation techniques, coping strategies, self care activities,and professional resources. Include suggested activities or practices to help improve emotional well-being, alongside my relevant mental health tips.\nSummarize the mental health support plan for easy reference.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -40
+      ],
+      "id": "4029a0a2-89e0-428e-a68e-48f3d0314b82",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        140
+      ],
+      "id": "a837474d-bd8c-4728-b330-439e053a01d8",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "cfuAodm7kgzpyzQt",
+          "name": "Groq account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "The thoughts of my enemies trouble me a lot."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e2b3072f-7891-4734-8867-07dc80463830",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bfb9c9b75cf5f3ff2d00fc96135a46d34200e80a02871d09cb450da4c8ded7bf"
+  },
+  "id": "D7ptabOcYD9Q2hCK",
+  "tags": []
+}
